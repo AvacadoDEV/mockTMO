@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project North Star, a mock TMO case study</title>
+<meta name="description" content="An end-to-end Transformation Management Office case study. Charter, SteerCo deck, portfolio dashboard, risk log, WED pre-read, and value tracking for a fictional retailer.">
+<style>
+  :root {
+    --bg: #0b1220;
+    --bg-elev: #111a2e;
+    --bg-card: #162238;
+    --border: #24344f;
+    --border-strong: #33486a;
+    --text: #e7edf7;
+    --text-dim: #a3b1c8;
+    --text-mute: #7a8aa8;
+    --accent: #f5c451;
+    --accent-dim: #a88936;
+    --green: #4ade80;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --purple: #c084fc;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --font-mono: "SF Mono", "Menlo", "Consolas", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { font-family: var(--font-mono); font-size: 0.9em; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 3px; }
+
+  /* Nav */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(11, 18, 32, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px;
+  }
+  .nav-brand {
+    font-weight: 600; font-size: 15px; letter-spacing: 0.5px;
+    color: var(--text);
+  }
+  .nav-brand span { color: var(--accent); }
+  .nav-links {
+    display: flex; gap: 22px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .nav-links a {
+    color: var(--text-dim); text-decoration: none;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--accent); text-decoration: none; }
+  @media (max-width: 720px) { .nav-links { display: none; } }
+
+  /* Layout */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  .narrow { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+  section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  h1, h2, h3, h4 { font-family: var(--font-sans); font-weight: 600; margin: 0 0 16px; letter-spacing: -0.01em; }
+  h1 { font-size: clamp(38px, 6vw, 62px); line-height: 1.05; letter-spacing: -0.03em; }
+  h2 { font-size: clamp(26px, 3.5vw, 36px); letter-spacing: -0.02em; }
+  h3 { font-size: 20px; }
+  h4 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 12px; }
+  p { color: var(--text-dim); margin: 0 0 14px; }
+  .eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--accent); font-weight: 600; }
+
+  /* Hero */
+  .hero {
+    padding: 100px 0 90px;
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(245, 196, 81, 0.10), transparent 60%),
+                radial-gradient(ellipse 60% 40% at 90% 20%, rgba(96, 165, 250, 0.07), transparent 60%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero .container { text-align: left; }
+  .hero .eyebrow { margin-bottom: 20px; display: inline-block; }
+  .hero h1 { max-width: 900px; margin-bottom: 24px; }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+  .hero-sub {
+    font-size: 20px; line-height: 1.5; color: var(--text-dim);
+    max-width: 720px; margin-bottom: 36px;
+  }
+  .hero-meta {
+    display: flex; flex-wrap: wrap; gap: 28px;
+    font-size: 13px; color: var(--text-mute);
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+  .hero-meta div strong { color: var(--text); font-weight: 500; }
+  .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px;
+    border-radius: 6px;
+    font-size: 14px; font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+  .btn-primary {
+    background: var(--accent); color: #1a1a1a;
+  }
+  .btn-primary:hover { background: #ffd76a; text-decoration: none; }
+  .btn-secondary {
+    background: transparent; color: var(--text);
+    border-color: var(--border-strong);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+  /* Context / stats */
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-top: 32px;
+  }
+  @media (max-width: 720px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 20px; border-radius: 6px;
+  }
+  .stat-value { font-size: 26px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; }
+  .stat-label { font-size: 12px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+
+  /* Artifact card */
+  .artifact {
+    display: grid; grid-template-columns: 1.15fr 1fr; gap: 60px;
+    align-items: start;
+  }
+  .artifact.reverse { grid-template-columns: 1fr 1.15fr; }
+  @media (max-width: 900px) {
+    .artifact, .artifact.reverse { grid-template-columns: 1fr; gap: 40px; }
+  }
+  .artifact-copy .eyebrow { margin-bottom: 12px; display: block; }
+  .artifact-copy h2 { margin-bottom: 20px; }
+  .artifact-copy p { font-size: 15px; }
+  .artifact-list { list-style: none; padding: 0; margin: 20px 0 24px; }
+  .artifact-list li {
+    color: var(--text-dim); font-size: 14px; padding: 8px 0 8px 22px;
+    position: relative; border-bottom: 1px dashed var(--border);
+  }
+  .artifact-list li:last-child { border-bottom: none; }
+  .artifact-list li::before {
+    content: "→"; color: var(--accent); position: absolute; left: 0; top: 8px;
+  }
+  .download-row {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 8px;
+    padding: 14px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .download-icon {
+    width: 32px; height: 32px; flex: 0 0 32px;
+    background: rgba(245, 196, 81, 0.12);
+    color: var(--accent);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .download-meta { flex: 1; font-size: 13px; }
+  .download-meta strong { display: block; color: var(--text); font-weight: 500; }
+  .download-meta span { color: var(--text-mute); font-size: 12px; }
+  .download-link {
+    color: var(--accent); font-size: 13px; font-weight: 500;
+  }
+
+  /* Visual containers */
+  .visual {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    overflow: hidden;
+  }
+  .visual-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .visual-header .title { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: 0.02em; }
+  .visual-header .subtitle { font-size: 11px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* Charter document mockup */
+  .doc-mock {
+    background: #fdfcf7;
+    color: #1a1a1a;
+    border-radius: 4px;
+    padding: 30px;
+    font-family: var(--font-serif);
+    font-size: 12px;
+    line-height: 1.5;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    aspect-ratio: 8.5 / 11;
+    overflow: hidden;
+  }
+  .doc-mock h3 { font-family: var(--font-sans); font-size: 15px; font-weight: 700; margin: 0 0 4px; color: #1a1a1a; }
+  .doc-mock .doc-eyebrow { font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: #b8894a; font-weight: 600; margin-bottom: 12px; }
+  .doc-mock .doc-section { margin-bottom: 12px; }
+  .doc-mock .doc-label { font-family: var(--font-sans); font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em; color: #6b5a3a; font-weight: 600; margin-bottom: 2px; }
+  .doc-mock .doc-body { color: #2a2a2a; font-size: 10.5px; line-height: 1.45; }
+  .doc-mock hr { border: none; border-top: 1px solid #d4c8a8; margin: 10px 0; }
+  .doc-mock ul { margin: 4px 0; padding-left: 16px; font-size: 10.5px; }
+  .doc-mock ul li { margin: 2px 0; }
+  .doc-mock .doc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* Slide viewer */
+  .slide-viewer {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .slide-canvas {
+    background: #fdfcf7;
+    color: #1a1a1a;
+    aspect-ratio: 16 / 9;
+    padding: 40px 44px;
+    display: flex; flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    font-family: var(--font-sans);
+  }
+  .slide { display: none; height: 100%; }
+  .slide.active { display: flex; flex-direction: column; }
+  .slide-tag { font-size: 9px; text-transform: uppercase; letter-spacing: 0.14em; color: #b8894a; font-weight: 700; margin-bottom: 8px; }
+  .slide-title { font-size: 22px; font-weight: 700; margin: 0 0 4px; color: #1a1a1a; letter-spacing: -0.01em; }
+  .slide-sub { font-size: 11px; color: #6b7280; margin: 0 0 18px; font-weight: 500; }
+  .slide-footer {
+    position: absolute; bottom: 12px; left: 44px; right: 44px;
+    display: flex; justify-content: space-between;
+    font-size: 8px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .slide-content { flex: 1; font-size: 11px; color: #2a2a2a; }
+  .slide-content h4 { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #b8894a; margin: 0 0 6px; }
+  .slide-content .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+  .slide-content .kpi { background: #f5f0e0; padding: 8px 10px; border-radius: 3px; border-left: 3px solid #b8894a; }
+  .slide-content .kpi .v { font-size: 16px; font-weight: 700; color: #1a1a1a; line-height: 1; }
+  .slide-content .kpi .l { font-size: 8px; color: #6b5a3a; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+  .slide-content .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .slide-content ul { margin: 0; padding-left: 14px; font-size: 10.5px; line-height: 1.55; }
+  .slide-content ul li { margin: 3px 0; }
+  .slide-content table { width: 100%; font-size: 9.5px; border-collapse: collapse; }
+  .slide-content table th { text-align: left; padding: 4px 6px; background: #f5f0e0; color: #6b5a3a; text-transform: uppercase; font-size: 8px; letter-spacing: 0.08em; font-weight: 700; border-bottom: 1px solid #d4c8a8; }
+  .slide-content table td { padding: 4px 6px; border-bottom: 1px solid #ece5cf; font-size: 10px; }
+  .rag-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+  .rag-g { background: #16a34a; }
+  .rag-a { background: #f59e0b; }
+  .rag-r { background: #dc2626; }
+  .slide-controls {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--bg-elev);
+    border-top: 1px solid var(--border);
+  }
+  .slide-nav { display: flex; gap: 6px; align-items: center; }
+  .slide-btn {
+    background: transparent; color: var(--text-dim);
+    border: 1px solid var(--border-strong);
+    padding: 6px 12px; border-radius: 4px;
+    font-size: 12px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .slide-btn:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
+  .slide-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .slide-counter { font-size: 12px; color: var(--text-mute); font-variant-numeric: tabular-nums; }
+  .slide-dots { display: flex; gap: 5px; }
+  .slide-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-strong); cursor: pointer; transition: background 0.15s; }
+  .slide-dot.active { background: var(--accent); }
+
+  /* Dashboard */
+  .dash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  @media (max-width: 720px) { .dash-grid { grid-template-columns: 1fr; } }
+  .dash-tile {
+    background: var(--bg-elev); border: 1px solid var(--border);
+    padding: 14px; border-radius: 4px;
+  }
+  .dash-tile .l { font-size: 10px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.08em; }
+  .dash-tile .v { font-size: 22px; font-weight: 600; color: var(--text); margin-top: 6px; line-height: 1; letter-spacing: -0.02em; }
+  .dash-tile .d { font-size: 11px; margin-top: 6px; color: var(--text-mute); }
+  .dash-tile .d.pos { color: var(--green); }
+  .dash-tile .d.neg { color: var(--red); }
+  .dash-tile .d.warn { color: var(--amber); }
+
+  .rag-grid { display: grid; grid-template-columns: 2fr repeat(4, 1fr); gap: 0; font-size: 12px; }
+  .rag-grid > div { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .rag-grid .rh { color: var(--text-mute); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; border-bottom: 1px solid var(--border-strong); }
+  .rag-grid .rn { color: var(--text); font-weight: 500; }
+  .rag-cell { display: flex; align-items: center; justify-content: center; }
+  .rag-cell .rag-dot { margin-right: 0; width: 12px; height: 12px; }
+
+  /* Risk log table */
+  .risk-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .risk-table th { text-align: left; padding: 10px 12px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-mute); background: var(--bg-elev); border-bottom: 1px solid var(--border-strong); font-weight: 600; }
+  .risk-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text-dim); vertical-align: top; }
+  .risk-table td strong { color: var(--text); font-weight: 500; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .b-high { background: rgba(248, 113, 113, 0.15); color: var(--red); }
+  .b-med { background: rgba(251, 191, 36, 0.15); color: var(--amber); }
+  .b-low { background: rgba(74, 222, 128, 0.15); color: var(--green); }
+  .b-open { background: rgba(96, 165, 250, 0.15); color: var(--blue); }
+  .b-mitig { background: rgba(192, 132, 252, 0.15); color: var(--purple); }
+  .b-closed { background: rgba(163, 177, 200, 0.15); color: var(--text-mute); }
+
+  /* Charts */
+  .chart-wrap { position: relative; margin: 12px 0; }
+  .legend { display: flex; gap: 16px; font-size: 11px; color: var(--text-dim); margin-top: 10px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-sw { width: 12px; height: 3px; border-radius: 1px; }
+
+  /* WED pre-read */
+  .wed-mock {
+    background: #fdfcf7; color: #1a1a1a;
+    border-radius: 4px; padding: 32px;
+    font-family: var(--font-serif);
+    font-size: 11px; line-height: 1.6;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    aspect-ratio: 8.5 / 11;
+    overflow: hidden;
+  }
+  .wed-mock .wed-eyebrow { font-family: var(--font-sans); font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: #b8894a; font-weight: 700; margin-bottom: 4px; }
+  .wed-mock h3 { font-family: var(--font-sans); font-size: 16px; font-weight: 700; margin: 0 0 4px; color: #1a1a1a; }
+  .wed-mock .wed-sub { font-family: var(--font-sans); font-size: 10px; color: #6b7280; margin-bottom: 14px; }
+  .wed-mock .wed-section { margin: 10px 0; }
+  .wed-mock .wed-label { font-family: var(--font-sans); font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.1em; color: #b8894a; font-weight: 700; margin-bottom: 3px; }
+  .wed-mock .wed-body { color: #2a2a2a; font-size: 10.5px; }
+  .wed-mock hr { border: none; border-top: 1px solid #d4c8a8; margin: 8px 0; }
+  .wed-mock .decision-box { background: #f5f0e0; padding: 8px 10px; border-left: 3px solid #b8894a; margin: 4px 0; border-radius: 2px; }
+  .wed-mock ul { margin: 4px 0; padding-left: 14px; font-size: 10.5px; }
+  .wed-mock ul li { margin: 2px 0; }
+
+  /* Design notes */
+  .note-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  @media (max-width: 720px) { .note-grid { grid-template-columns: 1fr; } }
+  .note {
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 24px; border-radius: 6px;
+  }
+  .note h3 { font-size: 16px; margin-bottom: 10px; color: var(--accent); }
+  .note p { font-size: 14px; color: var(--text-dim); margin-bottom: 0; }
+  .note .q { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-mute); font-weight: 600; margin-bottom: 6px; }
+
+  /* Footer */
+  footer {
+    padding: 40px 24px 60px;
+    background: var(--bg-elev);
+    text-align: center;
+    color: var(--text-mute);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--accent); }
+
+  /* Utility */
+  .divider {
+    border: none; border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">Project <span>North Star</span></div>
+    <div class="nav-links">
+      <a href="#context">Context</a>
+      <a href="#charter">Charter</a>
+      <a href="#steerco">SteerCo Deck</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#risks">Risk Log</a>
+      <a href="#wed">WED Pre-Read</a>
+      <a href="#value">Value Model</a>
+      <a href="#notes">Notes</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="container">
+    <div class="eyebrow">A mock TMO case study, by Anup Rao</div>
+    <h1>The artifacts a TMO ships in a working week.</h1>
+    <p class="hero-sub">
+      Six documents for one fictional retail transformation. Charter, SteerCo deck, dashboard, risk log,
+      Friday memo, value model. Same numbers throughout, same story throughout, so you can see how a
+      portfolio hangs together in practice rather than in the abstract.
+    </p>
+    <div class="hero-cta">
+      <a href="#context" class="btn btn-primary">Start with the case</a>
+      <a href="#notes" class="btn btn-secondary">Reasoning behind the choices</a>
+    </div>
+    <div class="hero-meta">
+      <div><strong>Fictional client:</strong> Maple Retail Co.</div>
+      <div><strong>Program:</strong> 36-month enterprise transformation</div>
+      <div><strong>Portfolio value:</strong> $180M NPV over 5 years</div>
+      <div><strong>Status:</strong> Month 14, Amber</div>
+    </div>
+  </div>
+</header>
+
+<!-- CONTEXT -->
+<section id="context">
+  <div class="narrow">
+    <div class="eyebrow">The case</div>
+    <h2>Maple Retail Co. A $8B omnichannel retailer, fourteen months into a hard transformation.</h2>
+    <p>
+      Fictional. Around 500 stores across Canada, roughly $8B in annual revenue, catalog spanning apparel,
+      homewares, and seasonal. In August 2025 the board approved <strong>Project North Star</strong>. Thirty-six
+      months, five workstreams, roughly $200M in capex. Modernize store technology. Unify the customer data platform.
+      Accelerate the supply chain. Rebuild loyalty. Re-platform merchant tools.
+    </p>
+    <p>
+      The program is running <strong>Amber</strong> at month 14. Two workstreams on plan, two slipping, one
+      blocked on a decision the Executive Committee has already deferred twice. Below is the pack the TMO would
+      put in front of leadership this week.
+    </p>
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-value">5</div><div class="stat-label">Workstreams</div></div>
+      <div class="stat"><div class="stat-value">$180M</div><div class="stat-label">NPV Target · 5yr</div></div>
+      <div class="stat"><div class="stat-value">14 / 36</div><div class="stat-label">Months Elapsed</div></div>
+      <div class="stat"><div class="stat-value">$47M</div><div class="stat-label">Value Realized · YTD</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CHARTER -->
+<section id="charter">
+  <div class="container">
+    <div class="artifact">
+      <div class="artifact-copy">
+        <span class="eyebrow">Artifact 01 · The one-pager</span>
+        <h2>Initiative Charter</h2>
+        <p>
+          Every workstream in the portfolio has a charter. What we're doing, why, who owns it, and how
+          we'll know we succeeded, on one page. Written once, referenced every time a scope debate starts.
+        </p>
+        <ul class="artifact-list">
+          <li>Objective, scope, and non-goals in the same document</li>
+          <li>Owner, sponsor, and RACI in the first five lines</li>
+          <li>Value hypothesis in one sentence, with a dollar figure attached</li>
+          <li>Five to seven milestones with dates the sponsor can hold people to</li>
+          <li>Top three risks up front, not buried at the back</li>
+        </ul>
+        <div class="download-row">
+          <div class="download-icon">DOC</div>
+          <div class="download-meta">
+            <strong>project-north-star-charter.docx</strong>
+            <span>Word · initiative charter for the Store Technology Refresh workstream</span>
+          </div>
+          <a class="download-link" href="downloads/project-north-star-charter.docx">Download →</a>
+        </div>
+      </div>
+      <div>
+        <div class="doc-mock">
+          <div class="doc-eyebrow">Initiative Charter · v3.2 · Approved</div>
+          <h3>Store Technology Refresh</h3>
+          <hr>
+          <div class="doc-section">
+            <div class="doc-label">Objective</div>
+            <div class="doc-body">Replace end-of-life POS and equip 500 stores with associate-mobility devices by Q4 2026, enabling clienteling, mobile checkout, and real-time inventory lookup on the sales floor.</div>
+          </div>
+          <div class="doc-grid">
+            <div class="doc-section">
+              <div class="doc-label">Sponsor</div>
+              <div class="doc-body">SVP, Store Operations</div>
+            </div>
+            <div class="doc-section">
+              <div class="doc-label">Owner</div>
+              <div class="doc-body">Director, Store Technology</div>
+            </div>
+          </div>
+          <div class="doc-section">
+            <div class="doc-label">Value Hypothesis</div>
+            <div class="doc-body">$62M NPV over 5yr from +180bps conversion, -30% checkout time, and reduced hardware TCO.</div>
+          </div>
+          <div class="doc-section">
+            <div class="doc-label">In / Out of Scope</div>
+            <div class="doc-body">
+              <ul>
+                <li><strong>In:</strong> POS, mobile devices, network refresh, associate training</li>
+                <li><strong>Out:</strong> Back-office ERP, loyalty rebuild (separate WS), payment gateway</li>
+              </ul>
+            </div>
+          </div>
+          <div class="doc-section">
+            <div class="doc-label">Key Milestones</div>
+            <div class="doc-body">
+              <ul>
+                <li>M8 · Vendor selection · <strong>Complete</strong></li>
+                <li>M12 · 10-store pilot · <strong>Complete, +140bps conv.</strong></li>
+                <li>M18 · Wave 1 rollout (150 stores)</li>
+                <li>M28 · Wave 2 rollout (250 stores)</li>
+                <li>M36 · Full deployment plus benefits realization gate</li>
+              </ul>
+            </div>
+          </div>
+          <div class="doc-section">
+            <div class="doc-label">Top Risks</div>
+            <div class="doc-body">
+              <ul>
+                <li>Network capacity in ~80 rural stores below spec</li>
+                <li>Training throughput assumes 40 stores/wk, untested at scale</li>
+                <li>Payment gateway migration (adjacent WS) is a hard dep</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEERCO DECK -->
+<section id="steerco">
+  <div class="container">
+    <div class="artifact reverse">
+      <div>
+        <div class="slide-viewer">
+          <div class="slide-canvas" id="slideCanvas">
+
+            <!-- Slide 1: Title -->
+            <div class="slide active" data-slide="1">
+              <div class="slide-tag">Q3 2026 Steering Committee · CONFIDENTIAL</div>
+              <div class="slide-title" style="font-size: 30px; margin-top: 20px;">Project North Star</div>
+              <div class="slide-sub" style="font-size: 14px;">Program status, three decisions required, portfolio outlook</div>
+              <div style="margin-top: auto;">
+                <div style="font-size: 10px; color: #6b5a3a; text-transform: uppercase; letter-spacing: 0.1em;">Presented to</div>
+                <div style="font-size: 12px; color: #1a1a1a; font-weight: 600;">Executive Committee · 22 October 2026</div>
+              </div>
+              <div class="slide-footer"><span>Maple Retail · TMO</span><span>Page 1 of 10</span></div>
+            </div>
+
+            <!-- Slide 2: DECISIONS REQUIRED -->
+            <div class="slide" data-slide="2">
+              <div class="slide-tag">Decisions Required Today</div>
+              <div class="slide-title">Three decisions. Twenty minutes.</div>
+              <div class="slide-sub">Each carries a specific consequence if deferred.</div>
+              <div class="slide-content">
+                <table>
+                  <tr>
+                    <th style="width: 40%;">Decision</th>
+                    <th style="width: 25%;">Owner asks EC to</th>
+                    <th style="width: 20%;">Cost of deferring</th>
+                    <th style="width: 15%;">Recommended</th>
+                  </tr>
+                  <tr>
+                    <td><strong>D-14.</strong> Approve $4.2M scope expansion to include rural network upgrade in Wave 1</td>
+                    <td>Approve funding + timing shift of 6 weeks</td>
+                    <td>~80 stores stranded in Wave 2 without connectivity; +$1.1M rework</td>
+                    <td><span class="badge b-low">Approve</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>D-15.</strong> Confirm sunset date for legacy loyalty platform (Q2 2027 vs. Q4 2027)</td>
+                    <td>Pick date; the CDP WS cannot design cutover without it</td>
+                    <td>2 workstreams blocked. Slip already 8 weeks and growing.</td>
+                    <td><span class="badge b-med">Q2 2027</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>D-16.</strong> Accept revised value forecast: $172M NPV (from $180M)</td>
+                    <td>Acknowledge; reset benefits realization targets</td>
+                    <td>Continued misalignment between finance and TMO reporting</td>
+                    <td><span class="badge b-low">Accept</span></td>
+                  </tr>
+                </table>
+                <p style="margin-top: 14px; font-size: 10px; color: #6b7280;"><em>Backing detail on slides 4–8. Skip to slide 10 for the ask if time runs short.</em></p>
+              </div>
+              <div class="slide-footer"><span>Maple Retail · TMO</span><span>Page 2 of 10</span></div>
+            </div>
+
+            <!-- Slide 3: Portfolio at a glance -->
+            <div class="slide" data-slide="3">
+              <div class="slide-tag">Portfolio at a Glance</div>
+              <div class="slide-title">Two workstreams green, two amber, one red.</div>
+              <div class="slide-sub">The reds and ambers concentrate in the same dependency chain.</div>
+              <div class="slide-content">
+                <div class="kpi-row">
+                  <div class="kpi"><div class="v">5</div><div class="l">Active Workstreams</div></div>
+                  <div class="kpi"><div class="v">$47M</div><div class="l">Value Realized YTD</div></div>
+                  <div class="kpi"><div class="v">67%</div><div class="l">Milestones on Plan</div></div>
+                  <div class="kpi"><div class="v">8 wk</div><div class="l">Critical Path Slip</div></div>
+                </div>
+                <table>
+                  <tr><th>Workstream</th><th style="width: 60px;">Sched.</th><th style="width: 60px;">Scope</th><th style="width: 60px;">Budget</th><th style="width: 60px;">Benefits</th><th style="width: 60px;">Overall</th></tr>
+                  <tr><td>Store Technology Refresh</td><td><span class="rag-dot rag-g"></span></td><td><span class="rag-dot rag-g"></span></td><td><span class="rag-dot rag-a"></span></td><td><span class="rag-dot rag-g"></span></td><td><span class="rag-dot rag-g"></span> Green</td></tr>
+                  <tr><td>Unified Customer Data Platform</td><td><span class="rag-dot rag-r"></span></td><td><span class="rag-dot rag-a"></span></td><td><span class="rag-dot rag-g"></span></td><td><span class="rag-dot rag-a"></span></td><td><span class="rag-dot rag-r"></span> Red</td></tr>
+                  <tr><td>Supply Chain Velocity</td><td><span class="rag-dot rag-g"></span></td><td><span class="rag-dot rag-g"></span></td><td><span class="rag-dot rag-g"></span></td><td><span class="rag-dot rag-g"></span></td><td><span class="rag-dot rag-g"></span> Green</td></tr>
+                  <tr><td>Digital Loyalty Reboot</td><td><span class="rag-dot rag-a"></span></td><td><span class="rag-dot rag-r"></span></td><td><span class="rag-dot rag-g"></span></td><td><span class="rag-dot rag-a"></span></td><td><span class="rag-dot rag-a"></span> Amber</td></tr>
+                  <tr><td>Merchant Tools Modernization</td><td><span class="rag-dot rag-a"></span></td><td><span class="rag-dot rag-g"></span></td><td><span class="rag-dot rag-a"></span></td><td><span class="rag-dot rag-a"></span></td><td><span class="rag-dot rag-a"></span> Amber</td></tr>
+                </table>
+              </div>
+              <div class="slide-footer"><span>Maple Retail · TMO</span><span>Page 3 of 10</span></div>
+            </div>
+
+            <!-- Slide 4: What changed -->
+            <div class="slide" data-slide="4">
+              <div class="slide-tag">What Changed Since Last SteerCo</div>
+              <div class="slide-title">Three material shifts. One is good news.</div>
+              <div class="slide-content">
+                <div class="two-col">
+                  <div>
+                    <h4>Progress worth noting</h4>
+                    <ul>
+                      <li><strong>Store Tech pilot exceeded target:</strong> +140bps conversion vs. +100bps hypothesis. Wave 1 unblocked.</li>
+                      <li><strong>Supply Chain WMS cutover:</strong> completed on time, no material incidents. $8M run-rate benefit confirmed.</li>
+                      <li><strong>Loyalty rebuild scope:</strong> reduced 12% after descope workshop. Fewer features, same value.</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4>New risks and slips</h4>
+                    <ul>
+                      <li><strong>CDP integration:</strong> vendor delivered API layer 6 weeks late. Cascade risk to loyalty and merchant WS.</li>
+                      <li><strong>Rural connectivity:</strong> field survey found 80 stores below spec. Costs $4.2M to remediate. See D-14.</li>
+                      <li><strong>Merchant tools OCM:</strong> change fatigue signal from field. Rollout velocity revised down 20%.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="slide-footer"><span>Maple Retail · TMO</span><span>Page 4 of 10</span></div>
+            </div>
+
+            <!-- Slide 5: Decision 14 detail -->
+            <div class="slide" data-slide="5">
+              <div class="slide-tag">Decision D-14 · Rural Connectivity Scope</div>
+              <div class="slide-title">Fund the network upgrade now, or reshape Wave 2.</div>
+              <div class="slide-sub">Field survey identified 80 stores where current bandwidth cannot support new POS + mobility devices.</div>
+              <div class="slide-content">
+                <div class="two-col">
+                  <div>
+                    <h4>Option A · Expand scope now <span style="color: #16a34a;">(Recommended)</span></h4>
+                    <ul>
+                      <li>+$4.2M capex, 6-week schedule shift</li>
+                      <li>Preserves Wave 1 rollout sequence</li>
+                      <li>Rural stores land with peers, no equity issue</li>
+                      <li>Vendor pricing locked at Q3 rate</li>
+                    </ul>
+                    <h4 style="margin-top: 14px;">Option B · Defer to Wave 2</h4>
+                    <ul>
+                      <li>No incremental cost <em>this year</em></li>
+                      <li>80 stores held back. Brand equity risk.</li>
+                      <li>Rework est. $1.1M when re-integrated</li>
+                      <li>Vendor pricing exposure for 2027</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4>TMO recommendation</h4>
+                    <p style="font-size: 10.5px;">Approve Option A. The $4.2M is genuine incremental spend, but $1.1M of it comes back as avoided rework. Net exposure sits at $3.1M against a program benefit envelope of $172M NPV. Well inside decision authority thresholds.</p>
+                    <h4 style="margin-top: 12px;">If EC approves today</h4>
+                    <ul>
+                      <li>Vendor SOW signed by 5 Nov</li>
+                      <li>Wave 1 sequence updated in plan</li>
+                      <li>Rural stores enter Wave 1B, land Feb 2027</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="slide-footer"><span>Maple Retail · TMO</span><span>Page 5 of 10</span></div>
+            </div>
+
+            <!-- Slide 6: Decision 15 detail -->
+            <div class="slide" data-slide="6">
+              <div class="slide-tag">Decision D-15 · Legacy Loyalty Sunset Date</div>
+              <div class="slide-title">This decision has been open for 8 weeks. Two workstreams are waiting.</div>
+              <div class="slide-content">
+                <div class="two-col">
+                  <div>
+                    <h4>Why it matters</h4>
+                    <p style="font-size: 10.5px;">The CDP workstream cannot design customer-record migration without a firm cutover date. The Loyalty Reboot cannot finalize member communications. Both have quietly slipped 8 weeks waiting for this.</p>
+                    <h4 style="margin-top: 12px;">Options</h4>
+                    <ul>
+                      <li><strong>Q2 2027 (Recommended):</strong> Aggressive but achievable. Aligns with Store Tech Wave 1 close.</li>
+                      <li><strong>Q4 2027:</strong> Safer. Adds $6M in dual-run costs. Loyalty benefits slip 6 months.</li>
+                      <li><strong>Defer decision another cycle:</strong> Compounds slip. Not recommended.</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4>What's stalling the decision</h4>
+                    <ul>
+                      <li>Concern about member communications during holiday 2026</li>
+                      <li>Ownership dispute: Marketing vs. Digital</li>
+                      <li>Uncertainty on data-migration effort</li>
+                    </ul>
+                    <h4 style="margin-top: 12px;">TMO resolution proposal</h4>
+                    <ul>
+                      <li>Q2 2027 cutover, staged member comms starting Jan</li>
+                      <li>Marketing owns comms plan, Digital owns platform</li>
+                      <li>Data migration scoped at 14 wks (validated w/ vendor)</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="slide-footer"><span>Maple Retail · TMO</span><span>Page 6 of 10</span></div>
+            </div>
+
+            <!-- Slide 7: Value at risk -->
+            <div class="slide" data-slide="7">
+              <div class="slide-tag">Value Realization</div>
+              <div class="slide-title">$47M realized. $8M at risk. Forecast reset to $172M.</div>
+              <div class="slide-sub">Decision D-16 asks the EC to accept the revised forecast and reset benefits targets.</div>
+              <div class="slide-content">
+                <div class="kpi-row">
+                  <div class="kpi"><div class="v">$47M</div><div class="l">Realized YTD</div></div>
+                  <div class="kpi"><div class="v">$125M</div><div class="l">Remaining Forecast</div></div>
+                  <div class="kpi"><div class="v">$8M</div><div class="l">Value at Risk</div></div>
+                  <div class="kpi"><div class="v">$172M</div><div class="l">Revised NPV Target</div></div>
+                </div>
+                <table>
+                  <tr><th>Workstream</th><th>Original NPV</th><th>Revised NPV</th><th>Δ</th><th>Driver of change</th></tr>
+                  <tr><td>Store Technology Refresh</td><td>$62M</td><td>$66M</td><td style="color:#16a34a;">+$4M</td><td>Pilot outperformed on conversion</td></tr>
+                  <tr><td>Unified Customer Data Platform</td><td>$38M</td><td>$32M</td><td style="color:#dc2626;">–$6M</td><td>Delayed activation cuts year-1 benefit</td></tr>
+                  <tr><td>Supply Chain Velocity</td><td>$44M</td><td>$46M</td><td style="color:#16a34a;">+$2M</td><td>WMS savings running ahead</td></tr>
+                  <tr><td>Digital Loyalty Reboot</td><td>$22M</td><td>$18M</td><td style="color:#dc2626;">–$4M</td><td>Scope descope + late sunset</td></tr>
+                  <tr><td>Merchant Tools Modernization</td><td>$14M</td><td>$10M</td><td style="color:#dc2626;">–$4M</td><td>Adoption velocity down 20%</td></tr>
+                  <tr style="background: #f5f0e0; font-weight: 700;"><td>Portfolio</td><td>$180M</td><td>$172M</td><td>–$8M</td><td>Net of gains and losses</td></tr>
+                </table>
+              </div>
+              <div class="slide-footer"><span>Maple Retail · TMO</span><span>Page 7 of 10</span></div>
+            </div>
+
+            <!-- Slide 8: Risk & dependency -->
+            <div class="slide" data-slide="8">
+              <div class="slide-tag">Top Program Risks</div>
+              <div class="slide-title">Five risks matter this quarter. Two need EC action.</div>
+              <div class="slide-content">
+                <table>
+                  <tr><th>Risk</th><th style="width: 12%;">Prob.</th><th style="width: 12%;">Impact</th><th style="width: 38%;">Mitigation</th></tr>
+                  <tr><td><strong>R-08</strong> Legacy loyalty sunset undecided</td><td><span class="badge b-high">High</span></td><td><span class="badge b-high">High</span></td><td>D-15 today. If deferred, CDP and Loyalty WS re-baseline required.</td></tr>
+                  <tr><td><strong>R-11</strong> Rural connectivity gap</td><td><span class="badge b-high">High</span></td><td><span class="badge b-med">Med</span></td><td>D-14 today. Vendor SOW ready to sign on approval.</td></tr>
+                  <tr><td><strong>R-14</strong> CDP vendor performance</td><td><span class="badge b-med">Med</span></td><td><span class="badge b-high">High</span></td><td>Weekly delivery review; contract remedies in play; parallel evaluation of alt vendor as fallback.</td></tr>
+                  <tr><td><strong>R-17</strong> Field change fatigue</td><td><span class="badge b-med">Med</span></td><td><span class="badge b-med">Med</span></td><td>Rollout velocity revised down 20%; OCM budget +$400k for extended field support.</td></tr>
+                  <tr><td><strong>R-19</strong> Finance/TMO reporting misalignment</td><td><span class="badge b-low">Low</span></td><td><span class="badge b-med">Med</span></td><td>D-16 today. Joint recalibration session scheduled 5 Nov.</td></tr>
+                </table>
+              </div>
+              <div class="slide-footer"><span>Maple Retail · TMO</span><span>Page 8 of 10</span></div>
+            </div>
+
+            <!-- Slide 9: Next 90 days -->
+            <div class="slide" data-slide="9">
+              <div class="slide-tag">Next 90 Days</div>
+              <div class="slide-title">What the EC should expect to see and when.</div>
+              <div class="slide-content">
+                <table>
+                  <tr><th>Milestone</th><th style="width: 20%;">Workstream</th><th style="width: 15%;">Target</th><th style="width: 20%;">Confidence</th></tr>
+                  <tr><td>Wave 1 rollout begins (150 stores)</td><td>Store Tech</td><td>Nov 2026</td><td><span class="badge b-low">High</span></td></tr>
+                  <tr><td>CDP API contract remedy resolved</td><td>CDP</td><td>Nov 2026</td><td><span class="badge b-med">Med</span></td></tr>
+                  <tr><td>Loyalty cutover plan signed off</td><td>Loyalty</td><td>Dec 2026</td><td><span class="badge b-med">Med · pending D-15</span></td></tr>
+                  <tr><td>Distribution centre 3 automation live</td><td>Supply Chain</td><td>Dec 2026</td><td><span class="badge b-low">High</span></td></tr>
+                  <tr><td>Merchant tools pilot expansion</td><td>Merchant</td><td>Jan 2027</td><td><span class="badge b-med">Med</span></td></tr>
+                  <tr><td>Q1 2027 SteerCo · benefits gate review</td><td>Portfolio</td><td>Jan 2027</td><td><span class="badge b-low">Confirmed</span></td></tr>
+                </table>
+                <p style="margin-top: 14px; font-size: 10.5px;"><strong>What the EC will be asked next quarter:</strong> approve Wave 2 sequencing, review revised NPV forecast against actuals, decide on merchant tools scope for FY27.</p>
+              </div>
+              <div class="slide-footer"><span>Maple Retail · TMO</span><span>Page 9 of 10</span></div>
+            </div>
+
+            <!-- Slide 10: The ask -->
+            <div class="slide" data-slide="10">
+              <div class="slide-tag">The Ask</div>
+              <div class="slide-title">If we have five minutes, this is what we need from you.</div>
+              <div class="slide-content">
+                <div style="margin-top: 20px;">
+                  <div style="background: #f5f0e0; padding: 14px 18px; border-left: 4px solid #b8894a; margin-bottom: 10px; border-radius: 3px;">
+                    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #6b5a3a; font-weight: 700;">Decision 1</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #1a1a1a; margin-top: 4px;">Approve $4.2M rural connectivity scope expansion. (D-14)</div>
+                  </div>
+                  <div style="background: #f5f0e0; padding: 14px 18px; border-left: 4px solid #b8894a; margin-bottom: 10px; border-radius: 3px;">
+                    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #6b5a3a; font-weight: 700;">Decision 2</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #1a1a1a; margin-top: 4px;">Confirm Q2 2027 as legacy loyalty sunset date. (D-15)</div>
+                  </div>
+                  <div style="background: #f5f0e0; padding: 14px 18px; border-left: 4px solid #b8894a; margin-bottom: 14px; border-radius: 3px;">
+                    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #6b5a3a; font-weight: 700;">Decision 3</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #1a1a1a; margin-top: 4px;">Accept revised $172M NPV portfolio target. (D-16)</div>
+                  </div>
+                  <p style="font-size: 11px; color: #4b5563;"><em>Next SteerCo: 23 January 2027. Weekly Exec Decisions memo continues Fridays.</em></p>
+                </div>
+              </div>
+              <div class="slide-footer"><span>Maple Retail · TMO</span><span>Page 10 of 10</span></div>
+            </div>
+
+          </div>
+          <div class="slide-controls">
+            <div class="slide-nav">
+              <button class="slide-btn" id="prevSlide">← Prev</button>
+              <button class="slide-btn" id="nextSlide">Next →</button>
+            </div>
+            <div class="slide-dots" id="slideDots"></div>
+            <div class="slide-counter"><span id="slideCurr">1</span> / <span id="slideTotal">10</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="artifact-copy">
+        <span class="eyebrow">Artifact 02 · The deck</span>
+        <h2>Executive SteerCo Deck</h2>
+        <p>
+          The decisions live on slide 2. Before status, before the walkthrough, before the RAG chart. If the
+          room only has time for one slide, that's the one people should be reading.
+        </p>
+        <ul class="artifact-list">
+          <li><strong>Decisions on slide 2, not slide 10.</strong> Executives are always short on time.</li>
+          <li>Every decision states the cost of deferring it, not just what's being asked</li>
+          <li>RAG at portfolio and workstream level, both shown</li>
+          <li>The ask includes accepting a revised NPV. Forecast is down $8M and we say so.</li>
+          <li>Backup slides referenced but not included. Ten slides, no more.</li>
+        </ul>
+        <div class="download-row">
+          <div class="download-icon">PPT</div>
+          <div class="download-meta">
+            <strong>project-north-star-steerco.pptx</strong>
+            <span>PowerPoint · 10 slides · executive SteerCo deck</span>
+          </div>
+          <a class="download-link" href="downloads/project-north-star-steerco.pptx">Download →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard">
+  <div class="container">
+    <div class="artifact">
+      <div class="artifact-copy">
+        <span class="eyebrow">Artifact 03 · The tracker</span>
+        <h2>Portfolio Dashboard</h2>
+        <p>
+          Every workstream on one page. RAG broken out by schedule, scope, budget, and benefits. A program
+          on plan for schedule but off plan for benefits is not green. Rolling those into a single dot
+          hides the trade-off the sponsor needs to see.
+        </p>
+        <ul class="artifact-list">
+          <li>Four-dimensional RAG. Schedule, scope, budget, benefits, all separately</li>
+          <li>Milestone hit rate over the trailing six months, so you can tell if discipline is improving</li>
+          <li>Value realized against plan and forecast on the same axis</li>
+          <li>KPI tiles at the top, for the reader who is only going to look at one thing</li>
+        </ul>
+        <div class="download-row">
+          <div class="download-icon">XLS</div>
+          <div class="download-meta">
+            <strong>project-north-star-tracker.xlsx</strong>
+            <span>Excel · dashboard, risk log, and value tracking model (3 tabs)</span>
+          </div>
+          <a class="download-link" href="downloads/project-north-star-tracker.xlsx">Download →</a>
+        </div>
+      </div>
+      <div>
+        <div class="visual">
+          <div class="visual-header">
+            <div>
+              <div class="title">Portfolio Dashboard · October 2026</div>
+              <div class="subtitle">Refreshed weekly · TMO owned</div>
+            </div>
+          </div>
+          <div class="dash-grid">
+            <div class="dash-tile"><div class="l">Value Realized YTD</div><div class="v">$47.0M</div><div class="d pos">+$3.2M vs. plan</div></div>
+            <div class="dash-tile"><div class="l">Milestones on Plan</div><div class="v">67%</div><div class="d warn">–8pp vs. last SteerCo</div></div>
+            <div class="dash-tile"><div class="l">Critical Path Slip</div><div class="v">8 wks</div><div class="d neg">Loyalty + CDP</div></div>
+          </div>
+          <div class="rag-grid">
+            <div class="rh">Workstream</div><div class="rh rag-cell">Sched.</div><div class="rh rag-cell">Scope</div><div class="rh rag-cell">Budget</div><div class="rh rag-cell">Benefits</div>
+            <div class="rn">Store Technology Refresh</div><div class="rag-cell"><span class="rag-dot rag-g"></span></div><div class="rag-cell"><span class="rag-dot rag-g"></span></div><div class="rag-cell"><span class="rag-dot rag-a"></span></div><div class="rag-cell"><span class="rag-dot rag-g"></span></div>
+            <div class="rn">Unified Customer Data Platform</div><div class="rag-cell"><span class="rag-dot rag-r"></span></div><div class="rag-cell"><span class="rag-dot rag-a"></span></div><div class="rag-cell"><span class="rag-dot rag-g"></span></div><div class="rag-cell"><span class="rag-dot rag-a"></span></div>
+            <div class="rn">Supply Chain Velocity</div><div class="rag-cell"><span class="rag-dot rag-g"></span></div><div class="rag-cell"><span class="rag-dot rag-g"></span></div><div class="rag-cell"><span class="rag-dot rag-g"></span></div><div class="rag-cell"><span class="rag-dot rag-g"></span></div>
+            <div class="rn">Digital Loyalty Reboot</div><div class="rag-cell"><span class="rag-dot rag-a"></span></div><div class="rag-cell"><span class="rag-dot rag-r"></span></div><div class="rag-cell"><span class="rag-dot rag-g"></span></div><div class="rag-cell"><span class="rag-dot rag-a"></span></div>
+            <div class="rn">Merchant Tools Modernization</div><div class="rag-cell"><span class="rag-dot rag-a"></span></div><div class="rag-cell"><span class="rag-dot rag-g"></span></div><div class="rag-cell"><span class="rag-dot rag-a"></span></div><div class="rag-cell"><span class="rag-dot rag-a"></span></div>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <div style="font-size: 11px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Milestone Hit-Rate · Trailing 6 Months</div>
+            <svg viewBox="0 0 500 140" style="width: 100%; height: auto;" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="hitGrad" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#f5c451" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#f5c451" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <line x1="30" y1="20" x2="490" y2="20" stroke="#24344f" stroke-dasharray="2 4"/>
+              <line x1="30" y1="60" x2="490" y2="60" stroke="#24344f" stroke-dasharray="2 4"/>
+              <line x1="30" y1="100" x2="490" y2="100" stroke="#24344f" stroke-dasharray="2 4"/>
+              <text x="20" y="24" fill="#7a8aa8" font-size="9" text-anchor="end">100%</text>
+              <text x="20" y="64" fill="#7a8aa8" font-size="9" text-anchor="end">75%</text>
+              <text x="20" y="104" fill="#7a8aa8" font-size="9" text-anchor="end">50%</text>
+              <path d="M 60 40 L 140 32 L 220 48 L 300 44 L 380 64 L 460 72" fill="none" stroke="#f5c451" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M 60 40 L 140 32 L 220 48 L 300 44 L 380 64 L 460 72 L 460 120 L 60 120 Z" fill="url(#hitGrad)"/>
+              <circle cx="60" cy="40" r="3.5" fill="#f5c451"/><circle cx="140" cy="32" r="3.5" fill="#f5c451"/><circle cx="220" cy="48" r="3.5" fill="#f5c451"/><circle cx="300" cy="44" r="3.5" fill="#f5c451"/><circle cx="380" cy="64" r="3.5" fill="#f5c451"/><circle cx="460" cy="72" r="3.5" fill="#f5c451"/>
+              <text x="60" y="132" fill="#7a8aa8" font-size="9" text-anchor="middle">May</text>
+              <text x="140" y="132" fill="#7a8aa8" font-size="9" text-anchor="middle">Jun</text>
+              <text x="220" y="132" fill="#7a8aa8" font-size="9" text-anchor="middle">Jul</text>
+              <text x="300" y="132" fill="#7a8aa8" font-size="9" text-anchor="middle">Aug</text>
+              <text x="380" y="132" fill="#7a8aa8" font-size="9" text-anchor="middle">Sep</text>
+              <text x="460" y="132" fill="#7a8aa8" font-size="9" text-anchor="middle">Oct</text>
+            </svg>
+          </div>
+
+          <div style="margin-top: 20px;">
+            <div style="font-size: 11px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Value Realization · Plan vs. Forecast vs. Actual (Cumulative $M)</div>
+            <svg viewBox="0 0 500 160" style="width: 100%; height: auto;" xmlns="http://www.w3.org/2000/svg">
+              <line x1="30" y1="20" x2="490" y2="20" stroke="#24344f" stroke-dasharray="2 4"/>
+              <line x1="30" y1="60" x2="490" y2="60" stroke="#24344f" stroke-dasharray="2 4"/>
+              <line x1="30" y1="100" x2="490" y2="100" stroke="#24344f" stroke-dasharray="2 4"/>
+              <line x1="30" y1="140" x2="490" y2="140" stroke="#24344f"/>
+              <text x="20" y="24" fill="#7a8aa8" font-size="9" text-anchor="end">$60M</text>
+              <text x="20" y="64" fill="#7a8aa8" font-size="9" text-anchor="end">$40M</text>
+              <text x="20" y="104" fill="#7a8aa8" font-size="9" text-anchor="end">$20M</text>
+              <text x="20" y="144" fill="#7a8aa8" font-size="9" text-anchor="end">$0</text>
+              <!-- Plan (dashed) -->
+              <path d="M 60 130 L 130 118 L 200 100 L 270 78 L 340 56 L 410 36 L 480 22" fill="none" stroke="#7a8aa8" stroke-width="2" stroke-dasharray="4 3"/>
+              <!-- Forecast (solid amber) -->
+              <path d="M 60 130 L 130 120 L 200 106 L 270 90 L 340 68 L 410 44 L 480 32" fill="none" stroke="#fbbf24" stroke-width="2"/>
+              <!-- Actual (solid gold) -->
+              <path d="M 60 130 L 130 122 L 200 108 L 270 92 L 340 66" fill="none" stroke="#f5c451" stroke-width="3"/>
+              <circle cx="340" cy="66" r="4" fill="#f5c451"/>
+              <text x="352" y="60" fill="#f5c451" font-size="10" font-weight="700">$47M actual</text>
+              <text x="60" y="154" fill="#7a8aa8" font-size="9" text-anchor="middle">M8</text>
+              <text x="130" y="154" fill="#7a8aa8" font-size="9" text-anchor="middle">M10</text>
+              <text x="200" y="154" fill="#7a8aa8" font-size="9" text-anchor="middle">M12</text>
+              <text x="270" y="154" fill="#7a8aa8" font-size="9" text-anchor="middle">M14</text>
+              <text x="340" y="154" fill="#7a8aa8" font-size="9" text-anchor="middle">M16</text>
+              <text x="410" y="154" fill="#7a8aa8" font-size="9" text-anchor="middle">M18</text>
+              <text x="480" y="154" fill="#7a8aa8" font-size="9" text-anchor="middle">M20</text>
+            </svg>
+            <div class="legend">
+              <div class="legend-item"><div class="legend-sw" style="background: #f5c451;"></div>Actual</div>
+              <div class="legend-item"><div class="legend-sw" style="background: #fbbf24;"></div>Forecast</div>
+              <div class="legend-item"><div class="legend-sw" style="background: #7a8aa8;"></div>Plan (baseline)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RISK LOG -->
+<section id="risks">
+  <div class="container">
+    <div class="artifact reverse">
+      <div>
+        <div class="visual" style="padding: 0;">
+          <div class="visual-header" style="padding: 20px 24px;">
+            <div>
+              <div class="title">Risk &amp; Dependency Log</div>
+              <div class="subtitle">Portfolio-level · Top 10 shown</div>
+            </div>
+          </div>
+          <div style="overflow-x: auto;">
+          <table class="risk-table">
+            <tr><th>ID</th><th>Risk / Dependency</th><th>Workstream</th><th>P</th><th>I</th><th>Owner</th><th>Status</th></tr>
+            <tr><td>R-08</td><td><strong>Legacy loyalty sunset undecided.</strong> CDP + Loyalty blocked.</td><td>Loyalty</td><td><span class="badge b-high">H</span></td><td><span class="badge b-high">H</span></td><td>CMO</td><td><span class="badge b-open">Escalated</span></td></tr>
+            <tr><td>R-11</td><td><strong>Rural connectivity below spec.</strong> 80 stores affected.</td><td>Store Tech</td><td><span class="badge b-high">H</span></td><td><span class="badge b-med">M</span></td><td>SVP Ops</td><td><span class="badge b-open">Escalated</span></td></tr>
+            <tr><td>R-14</td><td>CDP vendor API delivery slippage</td><td>CDP</td><td><span class="badge b-med">M</span></td><td><span class="badge b-high">H</span></td><td>VP Data</td><td><span class="badge b-mitig">Mitigating</span></td></tr>
+            <tr><td>R-17</td><td>Field change fatigue. Wave 1 velocity risk.</td><td>Store Tech</td><td><span class="badge b-med">M</span></td><td><span class="badge b-med">M</span></td><td>Dir OCM</td><td><span class="badge b-mitig">Mitigating</span></td></tr>
+            <tr><td>R-19</td><td>Finance / TMO benefits reporting misalignment</td><td>Portfolio</td><td><span class="badge b-low">L</span></td><td><span class="badge b-med">M</span></td><td>TMO Lead</td><td><span class="badge b-open">Open</span></td></tr>
+            <tr><td>D-04</td><td>DC3 automation → mobile POS inventory feed</td><td>Supply / Store Tech</td><td><span class="badge b-low">L</span></td><td><span class="badge b-med">M</span></td><td>VP Supply</td><td><span class="badge b-mitig">On track</span></td></tr>
+            <tr><td>D-07</td><td>CDP customer records → Loyalty cutover data</td><td>CDP / Loyalty</td><td><span class="badge b-high">H</span></td><td><span class="badge b-high">H</span></td><td>VP Data</td><td><span class="badge b-open">At risk</span></td></tr>
+            <tr><td>R-22</td><td>Merchant tools SME availability, Q1 gap</td><td>Merchant</td><td><span class="badge b-med">M</span></td><td><span class="badge b-med">M</span></td><td>VP Merch</td><td><span class="badge b-open">Open</span></td></tr>
+            <tr><td>R-25</td><td>Payment gateway migration adjacency</td><td>Store Tech</td><td><span class="badge b-low">L</span></td><td><span class="badge b-high">H</span></td><td>CTO</td><td><span class="badge b-mitig">Mitigating</span></td></tr>
+            <tr><td>R-06</td><td>WMS cutover contingency plan</td><td>Supply Chain</td><td><span class="badge b-low">L</span></td><td><span class="badge b-low">L</span></td><td>VP Supply</td><td><span class="badge b-closed">Closed</span></td></tr>
+          </table>
+          </div>
+        </div>
+      </div>
+      <div class="artifact-copy">
+        <span class="eyebrow">Artifact 04 · The log</span>
+        <h2>Risk &amp; Dependency Log</h2>
+        <p>
+          Risks and cross-workstream dependencies in the same log. Probability and impact are separate columns.
+          "Critical" by itself doesn't help anyone. Every open item has a named owner and a date by which
+          it needs to be resolved.
+        </p>
+        <ul class="artifact-list">
+          <li>Dependencies live in the risk log, not in a separate document</li>
+          <li>Status column doubles as escalation. "Escalated" means the item is going to the next SteerCo.</li>
+          <li>Closed items stay in the log for audit, sorted below the open ones</li>
+          <li>Owners are always named people. No team names, no "TBD".</li>
+        </ul>
+        <div class="download-row">
+          <div class="download-icon">XLS</div>
+          <div class="download-meta">
+            <strong>project-north-star-tracker.xlsx</strong>
+            <span>Risk &amp; Dependency Log tab. Full 27-row log with mitigations.</span>
+          </div>
+          <a class="download-link" href="downloads/project-north-star-tracker.xlsx">Download →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WED PRE-READ -->
+<section id="wed">
+  <div class="container">
+    <div class="artifact">
+      <div class="artifact-copy">
+        <span class="eyebrow">Artifact 05 · The Friday memo</span>
+        <h2>Weekly Exec Decisions Pre-Read</h2>
+        <p>
+          One to two pages, sent Friday morning, read Sunday night. Four minutes if you skim. The point is to
+          land Monday's discussion on the decisions on the table, not on the status recap. If the memo doesn't
+          shape a decision, we don't send it.
+        </p>
+        <ul class="artifact-list">
+          <li>Opens with the decisions on the table, before status or context</li>
+          <li>Greens get one line. Reds get a paragraph and a proposed path.</li>
+          <li>Every section closes with a named owner and a specific ask</li>
+          <li>Two pages, hard cap. Attachments by link, never embedded.</li>
+        </ul>
+        <div class="download-row">
+          <div class="download-icon">DOC</div>
+          <div class="download-meta">
+            <strong>project-north-star-wed-preread.docx</strong>
+            <span>Word · WED pre-read memo · week of 20 Oct 2026</span>
+          </div>
+          <a class="download-link" href="downloads/project-north-star-wed-preread.docx">Download →</a>
+        </div>
+      </div>
+      <div>
+        <div class="wed-mock">
+          <div class="wed-eyebrow">WED Pre-Read · Week of 20 October 2026 · CONFIDENTIAL</div>
+          <h3>Project North Star, decisions for Monday</h3>
+          <div class="wed-sub">From: TMO · To: Executive Committee · 4-minute read</div>
+          <hr>
+          <div class="wed-section">
+            <div class="wed-label">Decisions requested Monday</div>
+            <div class="decision-box"><strong>D-14</strong> · Approve $4.2M scope expansion for rural connectivity (SVP Ops · 5 min)</div>
+            <div class="decision-box"><strong>D-15</strong> · Confirm Q2 2027 legacy loyalty sunset (CMO · 10 min)</div>
+            <div class="decision-box"><strong>D-16</strong> · Accept revised $172M NPV target (TMO Lead · 5 min)</div>
+          </div>
+          <div class="wed-section">
+            <div class="wed-label">What changed this week</div>
+            <div class="wed-body">
+              <ul>
+                <li><strong>Green:</strong> Wave 1 vendor SOW ready to sign pending D-14. WMS cutover benefits confirmed at $8M run-rate.</li>
+                <li><strong>Amber:</strong> Loyalty cutover plan now 8 weeks behind. Second week without D-15 resolution.</li>
+                <li><strong>Red:</strong> CDP vendor missed API delivery date. Contract remedies invoked; alt-vendor scan initiated.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="wed-section">
+            <div class="wed-label">If D-15 slips again</div>
+            <div class="wed-body">
+              CDP and Loyalty workstreams require formal re-baseline. Estimated impact: +$3M dual-run cost, ~$4M NPV erosion, 12-week schedule slip on loyalty benefits. TMO recommends resolving Monday.
+            </div>
+          </div>
+          <div class="wed-section">
+            <div class="wed-label">Not on the agenda but worth 30 seconds</div>
+            <div class="wed-body">
+              Merchant Tools OCM survey (last week) shows field-change fatigue 18pp above program threshold. Working with HR partners; no decision required yet, but expect a discussion item next SteerCo.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE MODEL -->
+<section id="value">
+  <div class="container">
+    <div class="artifact reverse">
+      <div>
+        <div class="visual">
+          <div class="visual-header">
+            <div>
+              <div class="title">Value Tracking · Plan vs. Forecast vs. Actual</div>
+              <div class="subtitle">Refresh cadence: monthly · Owner: TMO + Finance</div>
+            </div>
+          </div>
+          <table class="risk-table" style="margin-bottom: 20px;">
+            <tr><th>Workstream</th><th>Plan NPV</th><th>Forecast</th><th>Actual YTD</th><th>Variance</th><th>Confidence</th></tr>
+            <tr><td><strong>Store Technology Refresh</strong></td><td>$62.0M</td><td>$66.0M</td><td>$12.4M</td><td style="color: var(--green);">+$4.0M</td><td><span class="badge b-low">High</span></td></tr>
+            <tr><td><strong>Unified Customer Data Platform</strong></td><td>$38.0M</td><td>$32.0M</td><td>$4.1M</td><td style="color: var(--red);">–$6.0M</td><td><span class="badge b-med">Med</span></td></tr>
+            <tr><td><strong>Supply Chain Velocity</strong></td><td>$44.0M</td><td>$46.0M</td><td>$22.0M</td><td style="color: var(--green);">+$2.0M</td><td><span class="badge b-low">High</span></td></tr>
+            <tr><td><strong>Digital Loyalty Reboot</strong></td><td>$22.0M</td><td>$18.0M</td><td>$5.5M</td><td style="color: var(--red);">–$4.0M</td><td><span class="badge b-med">Med</span></td></tr>
+            <tr><td><strong>Merchant Tools Modernization</strong></td><td>$14.0M</td><td>$10.0M</td><td>$3.0M</td><td style="color: var(--red);">–$4.0M</td><td><span class="badge b-high">Low</span></td></tr>
+            <tr style="background: var(--bg-elev); font-weight: 600;"><td><strong>Portfolio</strong></td><td><strong>$180.0M</strong></td><td><strong>$172.0M</strong></td><td><strong>$47.0M</strong></td><td style="color: var(--red);">–$8.0M</td><td><span class="badge b-med">Med</span></td></tr>
+          </table>
+
+          <div style="font-size: 11px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px;">Gap Bridge · Plan → Forecast ($M)</div>
+          <svg viewBox="0 0 500 180" style="width: 100%; height: auto;" xmlns="http://www.w3.org/2000/svg">
+            <line x1="30" y1="20" x2="490" y2="20" stroke="#24344f" stroke-dasharray="2 4"/>
+            <line x1="30" y1="70" x2="490" y2="70" stroke="#24344f" stroke-dasharray="2 4"/>
+            <line x1="30" y1="120" x2="490" y2="120" stroke="#24344f" stroke-dasharray="2 4"/>
+            <line x1="30" y1="160" x2="490" y2="160" stroke="#33486a"/>
+
+            <!-- Plan bar -->
+            <rect x="45" y="30" width="55" height="130" fill="#f5c451" opacity="0.85"/>
+            <text x="72" y="24" fill="#e7edf7" font-size="10" text-anchor="middle" font-weight="600">$180M</text>
+            <text x="72" y="175" fill="#7a8aa8" font-size="9" text-anchor="middle">Plan</text>
+
+            <!-- Positive delta store tech -->
+            <rect x="115" y="27" width="42" height="4" fill="#4ade80"/>
+            <text x="136" y="22" fill="#4ade80" font-size="9" text-anchor="middle">+$4</text>
+            <text x="136" y="175" fill="#7a8aa8" font-size="9" text-anchor="middle">Store</text>
+
+            <!-- Positive supply chain -->
+            <rect x="172" y="25" width="42" height="2" fill="#4ade80"/>
+            <text x="193" y="20" fill="#4ade80" font-size="9" text-anchor="middle">+$2</text>
+            <text x="193" y="175" fill="#7a8aa8" font-size="9" text-anchor="middle">Supply</text>
+
+            <!-- Negative CDP -->
+            <rect x="229" y="25" width="42" height="6" fill="#f87171"/>
+            <text x="250" y="20" fill="#f87171" font-size="9" text-anchor="middle">–$6</text>
+            <text x="250" y="175" fill="#7a8aa8" font-size="9" text-anchor="middle">CDP</text>
+
+            <!-- Negative Loyalty -->
+            <rect x="286" y="31" width="42" height="4" fill="#f87171"/>
+            <text x="307" y="26" fill="#f87171" font-size="9" text-anchor="middle">–$4</text>
+            <text x="307" y="175" fill="#7a8aa8" font-size="9" text-anchor="middle">Loyalty</text>
+
+            <!-- Negative Merchant -->
+            <rect x="343" y="35" width="42" height="4" fill="#f87171"/>
+            <text x="364" y="30" fill="#f87171" font-size="9" text-anchor="middle">–$4</text>
+            <text x="364" y="175" fill="#7a8aa8" font-size="9" text-anchor="middle">Merchant</text>
+
+            <!-- Forecast bar -->
+            <rect x="400" y="38" width="55" height="122" fill="#f5c451" opacity="0.85"/>
+            <text x="427" y="32" fill="#e7edf7" font-size="10" text-anchor="middle" font-weight="600">$172M</text>
+            <text x="427" y="175" fill="#7a8aa8" font-size="9" text-anchor="middle">Forecast</text>
+          </svg>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-sw" style="background: #4ade80;"></div>Upside</div>
+            <div class="legend-item"><div class="legend-sw" style="background: #f87171;"></div>Downside</div>
+            <div class="legend-item"><div class="legend-sw" style="background: #f5c451;"></div>Portfolio total</div>
+          </div>
+        </div>
+      </div>
+      <div class="artifact-copy">
+        <span class="eyebrow">Artifact 06 · The money view</span>
+        <h2>Value Tracking Model</h2>
+        <p>
+          The one view Finance and TMO have to agree on before anything else. Plan is the baseline signed by
+          the board. Forecast is current best estimate. Actuals are cash that's already hit the P&amp;L, or the
+          run rate. Leadership reads the variance column first.
+        </p>
+        <ul class="artifact-list">
+          <li>Plan, Forecast, and Actual live in three separate columns. No blending.</li>
+          <li>Confidence column stops us from selling a low-quality forecast as high-quality</li>
+          <li>Gap bridge shows where the $8M came out of, not just that it did</li>
+          <li>Portfolio row is a formula, not a plug. Every dollar rolls up from a workstream.</li>
+        </ul>
+        <div class="download-row">
+          <div class="download-icon">XLS</div>
+          <div class="download-meta">
+            <strong>project-north-star-tracker.xlsx</strong>
+            <span>Value Tracking tab. 3-year monthly view with sensitivity toggles.</span>
+          </div>
+          <a class="download-link" href="downloads/project-north-star-tracker.xlsx">Download →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN NOTES -->
+<section id="notes">
+  <div class="container">
+    <div class="narrow" style="padding: 0;">
+      <span class="eyebrow">The reasoning behind the artifacts</span>
+      <h2>Why I built each of these this way.</h2>
+      <p style="margin-bottom: 40px;">
+        You can copy a template. You can't copy the reasoning behind it. Six choices I made on the artifacts
+        above, and the thinking on each.
+      </p>
+    </div>
+    <div class="note-grid">
+      <div class="note">
+        <div class="q">Q · Why put decisions on slide 2 of the SteerCo deck?</div>
+        <h3>Front-load the ask, back-load the evidence.</h3>
+        <p>The most common failure I've seen in transformation reporting is a deck that arrives at the ask on slide 38. Executives are always short on time. The decision doesn't get any better for coming after the RAG chart. If the room ends early, at least the decision still got made.</p>
+      </div>
+      <div class="note">
+        <div class="q">Q · Why show revised NPV going <em>down</em> in the deck?</div>
+        <h3>If the number is soft, say so.</h3>
+        <p>The fastest way to lose an executive audience is to hold NPV flat when everyone in the room knows the story is more complicated. Naming the $8M erosion, alongside the $6M pickup from Store Tech, earns the permission you'll need for the harder asks later. Once someone catches you padding a forecast, they read the next one differently.</p>
+      </div>
+      <div class="note">
+        <div class="q">Q · Why is dimensional RAG (schedule / scope / budget / benefits) better than one dot?</div>
+        <h3>A program on time and over budget is not the same as one under budget and slipping.</h3>
+        <p>One dot hides the trade-off the sponsor needs to see. Splitting the dimensions makes it visible. "We can pull schedule green by pushing scope amber. Do you want that?" That's the conversation the TMO exists to force.</p>
+      </div>
+      <div class="note">
+        <div class="q">Q · Why does every risk have a named executive owner?</div>
+        <h3>"The team owns it" is how risks die.</h3>
+        <p>Naming a specific VP or SVP does two things. It forces a real accountability conversation at intake. And it means the risk log is escalation-ready by default. When R-08 goes red, the SteerCo already knows who's answering the question.</p>
+      </div>
+      <div class="note">
+        <div class="q">Q · Why is the WED memo two pages, not five?</div>
+        <h3>A memo that isn't read isn't a memo.</h3>
+        <p>Executives triage on Sunday night. A five-pager gets three pages skimmed. Two pages, decisions on top, everything else linked out. The purpose is to make Monday sharper, not to prove the TMO did the work.</p>
+      </div>
+      <div class="note">
+        <div class="q">Q · Why frame this around a fictional retailer?</div>
+        <h3>The frameworks travel. The brand doesn't need to.</h3>
+        <p>These artifacts would look substantially the same at any $5&ndash;20B retailer partway through a transformation. Using a real name would trade signal for the impression of endorsement, and nobody wins from that.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>
+    Built by <a href="https://anuprao.dev">Anup Rao</a> · Fictional client, working frameworks · No affiliation with any retailer named or unnamed.
+  </p>
+  <p style="margin-top: 8px; color: #55658a; font-size: 12px;">
+    <a href="downloads/project-north-star-charter.docx">Charter</a> ·
+    <a href="downloads/project-north-star-steerco.pptx">SteerCo Deck</a> ·
+    <a href="downloads/project-north-star-tracker.xlsx">Tracker</a> ·
+    <a href="downloads/project-north-star-wed-preread.docx">WED Pre-Read</a>
+  </p>
+</footer>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const prevBtn = document.getElementById('prevSlide');
+  const nextBtn = document.getElementById('nextSlide');
+  const currEl = document.getElementById('slideCurr');
+  const totalEl = document.getElementById('slideTotal');
+  const dotsEl = document.getElementById('slideDots');
+  let idx = 0;
+
+  totalEl.textContent = total;
+
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'slide-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => go(i));
+    dotsEl.appendChild(dot);
+  }
+
+  function render() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    dotsEl.querySelectorAll('.slide-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+    currEl.textContent = idx + 1;
+    prevBtn.disabled = idx === 0;
+    nextBtn.disabled = idx === total - 1;
+  }
+  function go(i) { idx = Math.max(0, Math.min(total - 1, i)); render(); }
+  prevBtn.addEventListener('click', () => go(idx - 1));
+  nextBtn.addEventListener('click', () => go(idx + 1));
+  document.addEventListener('keydown', (e) => {
+    if (document.getElementById('steerco').getBoundingClientRect().top > window.innerHeight) return;
+    if (document.getElementById('steerco').getBoundingClientRect().bottom < 0) return;
+    if (e.key === 'ArrowLeft') go(idx - 1);
+    if (e.key === 'ArrowRight') go(idx + 1);
+  });
+  render();
+})();
+</script>
+
+</body>
+</html>
